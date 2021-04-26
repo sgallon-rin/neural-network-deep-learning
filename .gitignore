@@ -7,3 +7,14 @@
 **/data/*
 *.h5
 *.pdf
+
+# Ignore all files in "LaTeX" folders
+**/report/*
+
+# Except .tex files and files in the /images/ folder
+!**/report/*.tex
+!**/report/*.bst
+!**/report/*.cls
+!**/report/*.bib
+!**/report/figures/
+!**/report/*.pdf
