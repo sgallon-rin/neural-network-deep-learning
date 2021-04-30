@@ -1,0 +1,165 @@
+\documentclass[11pt]{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fancyhdr}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{bm}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{extarrows}
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{remark}[subsection]{Remark}
+
+%%
+\newcommand\numberthis{\addtocounter{equation}{1}\tag{\theequation}}
+
+%% define new symbols
+\def\bx{\bm{x}}
+\def\bb{\bm{b}}
+\def\ba{\bm{a}}
+\def\bc{\bm{c}}
+\def\bf{\bm{f}}
+\def\by{\bm{y}}
+\def\bu{\bm{u}}
+\def\bv{\bm{v}}
+\def\BW{\bm{W}}
+\def\BA{\bm{A}}
+\def\bz{\bm{z}}
+\def\BZ{\bm{Z}}
+\def\BH{\bm{H}}
+\def\BL{\bm{L}}
+\def\BU{\bm{U}}
+\def\BV{\bm{V}}
+\def\BB{\bm{B}}
+\def\BC{\bm{C}}
+\def\BD{\bm{D}}
+\def\BE{\bm{E}}
+\def\BW{\bm{W}}
+\def\BQ{\bm{Q}}
+\def\BG{\bm{G}}
+\def\BA{\bm{A}}
+\def\BX{\bm{X}}
+\def\BY{\bm{Y}}
+\def\BQ{\bm{Q}}
+\def\BI{\bm{I}}
+\def\BR{\bm{R}}
+
+%% define new brackets
+\def\la{\left\langle}
+\def\ra{\right\rangle}
+\def\ln{\left\|}
+\def\rn{\right\|}
+\def\lb{\left(}
+\def\rb{\right)}
+\def\lsb{\left[}
+\def\rsb{\right]}
+\def\lcb{\left\{}
+\def\rcb{\right\}}
+
+%%
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+%%
+\title{Homework I}
+\author{Jialun Shen\\
+  16307110030 \\ }
+%\date{}
+
+
+\begin{document}
+\maketitle
+%------------------------------------
+%\begin{abstract}
+%\end{abstract}
+%-------------------------------------
+%=====================
+\section{Proof for Properties of Common Functions}
+
+The \textbf{logistic sigmoid} funcition is
+\begin{equation}
+\sigma(x) = \frac{1}{1+\exp(-x)}. \tag{3.30}\label{sigmoid}
+\end{equation}
+
+The \textbf{softplus} function is
+\begin{equation}
+\zeta(x) = \log(1+\exp(x)). \tag{3.31}\label{softplus}
+\end{equation}
+
+Multiply both the denominator and numerator of the fraction on the right side of \autoref{sigmoid} with $\exp(x)$, we have
+\begin{equation}
+\sigma(x) = \frac{\exp(x)}{\exp(x)+1} = \frac{\exp(x)}{\exp(x)+\exp(0)}. \tag{3.33}
+\end{equation}
+
+The derivative of $\sigma(x)$ is
+\begin{align}
+\frac{d}{dx}\sigma(x) &= \frac{d}{dx}\left(1+e^{-x}\right)^{-1} \notag\\
+&= \left(1+e^{-x}\right)^{-2}e^{-x} \notag\\
+&= \frac{1}{1+e^{-x}}\cdot\frac{e^{-x}}{1+e^{-x}} \notag\\
+&= \sigma(x)(1-\sigma(x)). \tag{3.34}
+\end{align}
+
+Also, we have
+\begin{align}
+1 - \sigma(x) = 1 - \frac{1}{1+\exp(-x)} = \frac{\exp(-x)}{1+\exp(-x)}
+= \frac{1}{\exp(x)+1} = \sigma(-x) \tag{3.35}\\
+\log\sigma(x) = \log\frac{1}{1+\exp(-x)} =  -\log(1+\exp(-x))
+= -\zeta(-x). \tag{3.36}
+\end{align}
+
+The derivative of $\zeta(x)$ is
+\begin{align}
+\frac{d}{dx}\zeta(x) = \frac{d}{dx}\log(1+\exp(x)) 
+= \frac{e^{x}}{1+e^x} = \frac{1}{1+e^{-x}} = \sigma(x). \tag{3.37}
+\end{align}
+
+Let $y = \sigma(x)$, we have
+\begin{align}
+& y = \frac{1}{1+\exp(-x)} \notag\\
+\iff & \exp(-x) = \frac{1}{y} - 1 \notag\\
+\iff & x = -\log\frac{1-y}{y} = \log\frac{y}{1-y} \notag\\
+\iff & \sigma^{-1}(x) = \log\frac{x}{1-x}, \quad\forall x\in(0,1). \tag{3.38}
+\end{align}
+
+Let $y = \zeta(x)$, we have
+\begin{align}
+& y = \log(1+\exp(x)) \notag\\
+\iff & \exp(x) = \exp(y) - 1 \notag\\
+\iff & x = \log(\exp(y)-1) \notag\\
+\iff & \zeta^{-1}(x) = \log(\exp(x)-1), \quad \forall x>0. \tag{3.39}
+\end{align}
+
+Also, we have
+\begin{align}
+\int^x_{-\infty}\sigma(y)dy &= \int^x_{-\infty}\frac{1}{1+\exp(-y)}dy \notag\\
+&= \int^x_{-\infty}\frac{e^y}{e^y+1}dy \notag \\
+& \xlongequal{z\triangleq e^{y}} \int^{e^x}_{0}\frac{1}{z+1}dz \notag\\
+&= \log(z+1) | ^{e^x}_0 \notag\\
+&= \log(\exp(x) + 1) \notag\\
+&= \zeta(x). \tag{3.40}
+\end{align}
+
+Finally, we also have
+\begin{align}
+\zeta(x) - \zeta(-x) &= \log(1+e^x) - \log(1+e^{-x}) \notag\\
+&= \log\frac{1+e^x}{1+e^{-x}} \notag\\
+&= \log\frac{e^x(e^{-x}+1)}{1+e^{-x}} \notag\\
+&= \log e^x \notag\\
+&= x. \tag{3.41}
+\end{align}
+
+%-------------------------------------
+%=====================
+\end{document}
