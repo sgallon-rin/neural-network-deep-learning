@@ -18,7 +18,7 @@ import torch.optim as optim
 import torchvision
 from torchvision import transforms
 from tensorboardX import SummaryWriter
-from tqdm import tqdm
+# from tqdm import tqdm
 from config import DATA_ROOT, HOME
 from models.resnet import resnet18, resnet34, resnet50, resnet101, resnet152, resnext101_32x8d, resnext50_32x4d, \
     wide_resnet50_2, wide_resnet101_2
@@ -27,6 +27,8 @@ from logger_utils import logger
 parser = argparse.ArgumentParser(description='Train a Network on CIFAR-10')
 parser.add_argument('--outf', default=os.path.join(HOME, "saved_curves"),
                     help='folder to output curves')  # 输出结果保存路径，用于画图
+parser.add_argument('--save-board', type=bool, default=False,
+                    help='whether to save tensorboard logs')
 parser.add_argument('--boardf', default=os.path.join(HOME, "saved_boards"),
                     help='folder to output tensorboard logs')  # 输出tensorboard信息保存路径
 parser.add_argument('--outfname', default='',
@@ -231,7 +233,8 @@ def train():
     max_acc = 0.
 
     # 构建 SummaryWriter
-    if args.boardf:
+    if args.save_board:
+        logger.info("Save tensorboard info to {}".format(args.boardf))
         writer = SummaryWriter(args.boardf)
 
     for epoch in range(MAX_EPOCH):
@@ -241,7 +244,7 @@ def train():
         total = 0.
 
         net.train()  # 切换到训练模式
-        for i, data in enumerate(tqdm(trainloader)):
+        for i, data in enumerate(trainloader):
 
             # forward
             inputs, labels = data
@@ -273,7 +276,7 @@ def train():
                 loss_mean = 0.
 
         # 每个epoch，记录weight, bias的grad, data
-        if args.boardf:
+        if args.save_board:
             for name, param in net.named_parameters():
                 writer.add_histogram(name + '_grad', param.grad, epoch)
                 writer.add_histogram(name + '_data', param, epoch)
@@ -287,7 +290,7 @@ def train():
             loss_val = 0.
             net.eval()  # 切换到评估模式
             with torch.no_grad():
-                for j, data in enumerate(tqdm(testloader)):
+                for j, data in enumerate(testloader):
                     inputs, labels = data
                     inputs = inputs.to(device)
                     labels = labels.to(device)
