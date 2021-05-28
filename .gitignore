@@ -4,10 +4,14 @@
 **/__pycache__/*
 **/.ipynb_checkpoints/
 **/test/*
-**/data/*
+**/log/*
+**/saved_curves/*
+**/saved_models/*
+**/saved_boards/*
 *.h5
 *.pdf
 *.zip
+*.tar.gz
 
 # Ignore all files in "LaTeX" folders
 **/report/*

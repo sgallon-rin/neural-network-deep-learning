@@ -26,11 +26,11 @@ from logger_utils import logger
 
 parser = argparse.ArgumentParser(description='Train a Network on CIFAR-10')
 parser.add_argument('--outf', default=os.path.join(HOME, "saved_curves"),
-                    help='folder to output logs')  # 输出结果保存路径
+                    help='folder to output curves')  # 输出结果保存路径，用于画图
 parser.add_argument('--boardf', default=os.path.join(HOME, "saved_boards"),
                     help='folder to output tensorboard logs')  # 输出tensorboard信息保存路径
 parser.add_argument('--outfname', default='',
-                    help='filename to output logs')  # 输出结果保存文件名
+                    help='filename of output curves')  # 输出结果保存文件名
 parser.add_argument('--model-path', default=os.path.join(HOME, "saved_models"),
                     help='path to folder to save trained models')
 parser.add_argument('--seed', type=int, default=1,
