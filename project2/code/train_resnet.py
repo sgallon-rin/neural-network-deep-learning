@@ -323,7 +323,7 @@ def train():
 
 # 6 SAVE MODEL
 def save_model(train_losscurve, train_acc_curve, valid_losscurve, valid_acc_curve, max_acc):
-    current_time = time.strftime("%Y_%m_%d_%H:%M:%S", time.localtime())
+    current_time = time.strftime("%Y_%m_%d_%H.%M.%S", time.localtime())
 
     # 保存模型参数
     model_path = args.model_path
@@ -336,7 +336,7 @@ def save_model(train_losscurve, train_acc_curve, valid_losscurve, valid_acc_curv
     if not os.path.exists(args.outf):
         os.makedirs(args.outf)
 
-    with open(args.outf + args.outfname + current_time + '_{:.2%}'.format(max_acc) + '.txt', 'w') as f:
+    with open(os.path.join(args.outf, args.outfname + args.model_name + "_" + current_time + '.txt', 'w')) as f:
         f.write('Training loss:\n')
         f.write(str(train_losscurve))
         f.write('\n\nTraining acc:\n')
