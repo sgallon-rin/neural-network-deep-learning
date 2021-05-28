@@ -37,7 +37,7 @@ parser.add_argument('--model-path', default=os.path.join(HOME, "saved_models"),
                     help='path to folder to save trained models')
 parser.add_argument('--seed', type=int, default=1,
                     help='random seed')
-parser.add_argument('--epoch', type=int, default=240,
+parser.add_argument('--epoch', type=int, default=50,
                     help='maximum epoch')
 parser.add_argument('--batch', type=int, default=128,
                     help='batch size')
