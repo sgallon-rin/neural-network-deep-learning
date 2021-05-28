@@ -336,7 +336,7 @@ def save_model(train_losscurve, train_acc_curve, valid_losscurve, valid_acc_curv
     if not os.path.exists(args.outf):
         os.makedirs(args.outf)
 
-    with open(os.path.join(args.outf, args.outfname + args.model_name + "_" + current_time + '.txt', 'w')) as f:
+    with open(os.path.join(args.outf, args.outfname + args.model_name + "_" + current_time + '.txt'), 'w') as f:
         f.write('Training loss:\n')
         f.write(str(train_losscurve))
         f.write('\n\nTraining acc:\n')
