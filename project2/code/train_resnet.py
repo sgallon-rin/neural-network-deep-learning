@@ -59,6 +59,8 @@ parser.add_argument('--optim', default='sgd',
                     help='choose which optimizer to use (default sgd)')
 parser.add_argument('--scheduler', default='multisteplr',
                     help='the scheme of scheduler (default multisteplr)')  # 学习率调整策略
+parser.add_argument('--conv1', default='723',
+                    help='conv1 layer kernel_size, stride, padding (default \'723\' for 7, 2, 3)')
 args = parser.parse_args()
 
 
@@ -133,6 +135,14 @@ testloader = torch.utils.data.DataLoader(dataset=testset,
                                          num_workers=4)
 
 # 2 MODEL
+# first conv layer
+if not args.conv1.isdigit() or len(args.conv1) != 3:
+    conv1 = (7, 2, 3)
+    logger.warning("Illegal conv1: {}, reset to default 723".format(args.conv1))
+else:
+    conv1 = tuple(map(int, list(args.conv1)))
+logger.info("First conv layer kernel_size={}, stride={}, padding={}".format(*conv1))
+
 # activation function
 activations = {
     "relu": nn.ReLU,
@@ -182,7 +192,7 @@ if args.model_name not in models.keys():
     logger.warning("Illegal model_name: {}, model_name should be in {}, reset to default \"resnet34\""
                    .format(args.model_name, list(models.keys())))
 net = models[args.model_name](pretrained=False, progress=True, activation=activation, hidden_dim=hidden_dim,
-                              dropout_p=dropout_p, num_classes=10, zero_init_residual=True)
+                              dropout_p=dropout_p, num_classes=10, zero_init_residual=True, conv1=conv1)
 net.to(device)
 logger.info("Use model: {}".format(args.model_name))
 
