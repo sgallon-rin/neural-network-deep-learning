@@ -143,7 +143,7 @@ class ResNet(nn.Module):
                                bias=False)
         self.bn1 = norm_layer(self.inplanes)
         # self.relu = nn.ReLU(inplace=True)
-        self.relu = activation(inplace=True)  # customize the activation function
+        self.relu = activation()  # customize the activation function
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2,
