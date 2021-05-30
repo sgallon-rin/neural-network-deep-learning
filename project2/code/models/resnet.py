@@ -163,7 +163,7 @@ class ResNet(nn.Module):
             self.fc1 = nn.Linear(512 * block.expansion, self.hidden_dim)
             if self.dropout_p:
                 self.dropout = torch.nn.Dropout(p=dropout_p, inplace=False)
-            self.bn2 = nn.BatchNorm1d(num_features=self.hidden)
+            self.bn2 = nn.BatchNorm1d(num_features=self.hidden_dim)
             self.fc2 = nn.Linear(self.hidden, num_classes)
 
         for m in self.modules():
