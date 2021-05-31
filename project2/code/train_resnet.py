@@ -46,7 +46,7 @@ parser.add_argument('--lr', type=float, default=0.1,
 parser.add_argument('--reg', type=float, default=5e-4,
                     help='weight decay coefficient (L2 regularization)')
 parser.add_argument('--aug', type=int, default=0,
-                    help='data augmentation type (0/1/2)=(no aug(default)/RandomGrayscal/RandomCrop+HorizontalFlip)')
+                    help='data augmentation type (0/1/2)=(no aug(default)/RandomGrayscale/RandomCrop+HorizontalFlip)')
 parser.add_argument('--activation', default='relu',
                     help='activation function (default relu)')
 parser.add_argument('--hidden', type=int, default=0,
@@ -87,7 +87,9 @@ logger.info("L2 regularization weight decay coefficient: {}".format(L2_REG))
 log_interval = 40  # 多少个batch打印一次学习信息
 val_interval = 1  # 多少个epoch进行一次验证
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-logger.info('Use device: {}, device name: {}'.format(device, torch.cuda.get_device_name(device)))
+logger.info('Use device: {}'.format(device))
+if device != torch.device("cpu"):
+    logger.info("Device name: {}".format(torch.cuda.get_device_name(device)))
 
 # 1 DATA
 # data augmentation

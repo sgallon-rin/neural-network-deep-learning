@@ -8,6 +8,7 @@
 **/saved_curves/*
 **/saved_models/*
 **/saved_boards/*
+**/VGG_BatchNorm/*
 *.h5
 *.pdf
 *.zip
