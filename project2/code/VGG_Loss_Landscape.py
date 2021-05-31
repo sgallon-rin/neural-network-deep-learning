@@ -119,6 +119,9 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
             optimizer.zero_grad()
             prediction = model(x)
             loss = criterion(prediction, y)
+            loss.backward()
+            optimizer.step()
+
             # You may need to record some variable values here
             # if you want to get loss gradient, use
             # grad = model.classifier[4].weight.grad.clone()
@@ -142,9 +145,6 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
                 logger.info("Train:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
                     epoch + 1, epochs_n, i + 1, len(train_loader), loss_curve[index], acc))
                 index += 1
-
-            loss.backward()
-            optimizer.step()
 
         # losses_list.append(loss_list)
         # grads.append(grad)
