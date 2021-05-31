@@ -87,7 +87,7 @@ def set_random_seeds(seed_value=0, device=torch.device('cpu')):
 # to observe the training
 def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None, epochs_n=100, best_model_path=None):
     model.to(device)
-    loss_curve = [np.nan] * epochs_n  # loss
+    loss_curve = [0]  # loss
     # train_accuracy_curve = [[np.nan] * epochs_n]
     train_accuracy_curve = []
     val_accuracy_curve = [np.nan] * epochs_n
@@ -110,7 +110,6 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
 
         correct = 0
         total = 0
-        loss_curve[epoch] = 0  # maintain this to plot the training curve
 
         for i, data in enumerate(train_loader):
             x, y = data
@@ -145,6 +144,7 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
                 logger.info("Train:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
                     epoch + 1, epochs_n, i + 1, len(train_loader), loss_curve[index], acc))
                 index += 1
+                loss_curve.append(0)
 
         # losses_list.append(loss_list)
         # grads.append(grad)
