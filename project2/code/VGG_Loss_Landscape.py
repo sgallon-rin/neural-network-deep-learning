@@ -103,7 +103,7 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
     index = 0  # index of loss, acc record
     logger.info('Training start!')
     start_time = time.time()
-    for epoch in tqdm(range(epochs_n), unit='epoch'):
+    for epoch in range(epochs_n):
         if scheduler is not None:
             scheduler.step()
         model.train()
