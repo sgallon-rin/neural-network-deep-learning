@@ -5,10 +5,11 @@
 **/.ipynb_checkpoints/
 **/test/*
 **/log/*
-**/saved_curves/*
-**/saved_models/*
-**/saved_boards/*
-**/VGG_BatchNorm/*
+project2/saved_curves/*
+project2/saved_models/*
+project2/saved_boards/*
+project2/code/VGG_BatchNorm/*
+project2/landscape/*
 *.h5
 *.pdf
 *.zip
