@@ -279,7 +279,7 @@ def train_for_beta_smoothness(models, optimizers, criterion, train_loader, val_l
             y = y.to(device)
             for idx, model in enumerate(models):
                 outputs[i] = model(x)
-                optimizers[i].backward()
+                optimizers[i].zero_grad()
                 losses[i] = criterion(outputs[i], y)
                 losses[i].backward()
                 optimizers[i].step()
