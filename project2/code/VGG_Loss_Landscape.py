@@ -218,7 +218,7 @@ def main():
         model1 = VGG_A()
         model2 = VGG_A_BatchNorm()
         optimizer1 = torch.optim.Adam(model1.parameters(), lr=lr)
-        optimizer2 = torch.optim.Adam(model1.parameters(), lr=lr)
+        optimizer2 = torch.optim.Adam(model2.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
         loss1, grads_diff1, train_acc1, val_acc1 = train(model1, optimizer1, criterion, train_loader, val_loader,
                                                          epochs_n=epo)
