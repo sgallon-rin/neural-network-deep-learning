@@ -12,7 +12,7 @@ import numpy as np
 from config import HOME
 
 
-def plot_cifar():
+def plot_cifar(save_filename="./plot.png"):
     file_path = os.path.join(HOME, "saved_curves")
     with open(os.path.join(file_path, 'resnet34_aug2_lr1e-2_conv1311_batch64_epoch100.txt'), 'r') as f:
         line = f.readline()
@@ -56,11 +56,11 @@ def plot_cifar():
     plt.ylabel('acc')
     plt.legend(["Training accuracy", "Validation accuracy"], loc='lower right')
 
-    plt.savefig("./plot.png")
+    plt.savefig(save_filename)
     plt.show()
 
 
-def plot_loss_landscape():
+def plot_loss_landscape(save_filename="./plot.png"):
     train_curves = []
     with open('dropout_loss.txt') as f:
         while True:
@@ -105,9 +105,10 @@ def plot_loss_landscape():
 
     plt.legend([p1, p2], ['Standard VGG + Dropout', 'Standard VGG + BatchNorm'])
 
-    plt.savefig("./plot.png")
+    plt.savefig(save_filename)
     plt.show()
 
 
 if __name__ == "__main__":
-    plot_cifar()
+    # plot_cifar()
+    plot_loss_landscape()

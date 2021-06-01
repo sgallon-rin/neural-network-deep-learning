@@ -208,11 +208,13 @@ def main():
         os.mkdir(grad_save_path)
     if not os.path.exists(acc_save_path):
         os.mkdir(acc_save_path)
+    logger.info("Save path made!")
 
     lrs = [1e-3, 2e-3, 1e-4, 5e-4]
 
     set_random_seeds(seed_value=2020, device=device)
     for lr in lrs:
+        logger.info("Training for lr={}".format(lr))
         model1 = VGG_A()
         model2 = VGG_A_BatchNorm()
         optimizer1 = torch.optim.Adam(model1.parameters(), lr=lr)
@@ -239,6 +241,7 @@ def main():
             f.write('val_acc' + str(val_acc1) + '\n')
             f.write('train_acc_bn' + str(train_acc2) + '\n')
             f.write('val_acc_bn' + str(val_acc2) + '\n')
+        logger.info("Record files saved.")
     # np.savetxt(os.path.join(loss_save_path, 'loss.txt'), loss, fmt='%s', delimiter=' ')
     # np.savetxt(os.path.join(grad_save_path, 'grads.txt'), grads, fmt='%s', delimiter=' ')
 
@@ -250,5 +253,15 @@ def main():
     # max_curve = []
 
 
+def test():
+    model = VGG_A_BatchNorm()
+    lr = 1e-3
+    epo = 20
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+    _ = train(model, optimizer, criterion, train_loader, val_loader, epochs_n=epo)
+
+
 if __name__ == "__main__":
-    main()
+    # main()
+    test()
