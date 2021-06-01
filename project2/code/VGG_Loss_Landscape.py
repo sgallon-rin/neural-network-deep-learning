@@ -199,16 +199,10 @@ def main():
     # Train your model
     # feel free to modify
     epo = 20
-    loss_save_path = os.path.join(home_path, 'loss_landscape')
-    grad_save_path = os.path.join(home_path, 'grad_landscape')
-    acc_save_path = os.path.join(home_path, 'acc_landscape')
-    if not os.path.exists(loss_save_path):
-        os.mkdir(loss_save_path)
-    if not os.path.exists(grad_save_path):
-        os.mkdir(grad_save_path)
-    if not os.path.exists(acc_save_path):
-        os.mkdir(acc_save_path)
-    logger.info("Save path made!")
+    landscape_save_path = os.path.join(home_path, 'landscape')
+    if not os.path.exists(landscape_save_path):
+        os.mkdir(landscape_save_path)
+        logger.info("landscape save path made!")
 
     lrs = [1e-3, 2e-3, 1e-4, 5e-4]
 
@@ -225,18 +219,18 @@ def main():
         loss2, grads_diff2, train_acc2, val_acc2 = train(model2, optimizer2, criterion, train_loader, val_loader,
                                                          epochs_n=epo)
         # save loss and grads difference
-        with open(os.path.join(loss_save_path, 'loss_{}.txt'.format(lr)), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'loss.txt'), 'a') as f:
             f.write(str(loss1) + '\n')
-        with open(os.path.join(loss_save_path, 'bn_loss_{}.txt'.format(lr)), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'bn_loss.txt'), 'a') as f:
             f.write(str(loss2) + '\n')
 
-        with open(os.path.join(grad_save_path, 'grads_{}.txt'.format(lr)), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'grads.txt'), 'a') as f:
             f.write(str(grads_diff1) + '\n')
-        with open(os.path.join(grad_save_path, 'bn_grads_{}.txt'.format(lr)), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'bn_grads.txt'), 'a') as f:
             f.write(str(grads_diff2) + '\n')
 
         # save train, val accuracy
-        with open(os.path.join(acc_save_path, 'acc_{}.txt'.format(lr)), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'acc.txt'), 'a') as f:
             f.write('train_acc' + str(train_acc1) + '\n')
             f.write('val_acc' + str(val_acc1) + '\n')
             f.write('train_acc_bn' + str(train_acc2) + '\n')
