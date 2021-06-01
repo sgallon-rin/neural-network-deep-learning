@@ -228,10 +228,10 @@ def main():
         with open(os.path.join(landscape_save_path, 'bn_grads_diff.txt'), 'a') as f:
             f.write(str(grads_diff2) + '\n')
 
-        with open(os.path.join(landscape_save_path, 'grads_norm.txt'), 'a') as f:
-            f.write(str(grads_norm1) + '\n')
-        with open(os.path.join(landscape_save_path, 'bn_grads_norm.txt'), 'a') as f:
-            f.write(str(grads_norm2) + '\n')
+        # with open(os.path.join(landscape_save_path, 'grads_norm.txt'), 'a') as f:
+        #     f.write(str(grads_norm1) + '\n')
+        # with open(os.path.join(landscape_save_path, 'bn_grads_norm.txt'), 'a') as f:
+        #     f.write(str(grads_norm2) + '\n')
 
         logger.info("Record files saved.")
     # np.savetxt(os.path.join(loss_save_path, 'loss.txt'), loss, fmt='%s', delimiter=' ')
@@ -254,6 +254,72 @@ def test():
     _ = train(model, optimizer, criterion, train_loader, val_loader, epochs_n=epo)
 
 
+def train_for_beta_smoothness(models, optimizers, criterion, train_loader, val_loader, scheduler=None, epochs_n=20):
+    assert len(models) == len(optimizers), "models and optimizers list len mismatch!"
+
+    num_models = len(models)
+    for model in models:
+        model.to(device)
+
+    outputs = [0] * len(models)
+    losses = [0] * len(models)
+    grads = [0] * len(models)
+    beta_smoothness = []
+    logger.info('Training for beta smoothness start!')
+
+    for epoch in range(epochs_n):
+        if scheduler is not None:
+            scheduler.step()
+        for model in models:
+            model.train()
+
+        for i, data in enumerate(train_loader):
+            x, y = data
+            x = x.to(device)
+            y = y.to(device)
+            for idx, model in enumerate(models):
+                outputs[i] = model(x)
+                optimizers[i].backward()
+                losses[i] = criterion(outputs[i], y)
+                losses[i].backward()
+                optimizers[i].step()
+                grads[i] = model.classifier[4].weight.grad.clone()
+
+            max_diff = float("-inf")
+            for a in range(num_models):
+                for b in range(a + 1, num_models):
+                    max_diff = max(max_diff, round(torch.norm(grads[a] - grads[b]).item(), 4))
+            beta_smoothness.append(max_diff)
+
+    return beta_smoothness
+
+
+def main_for_beta_smoothness():
+    epo = 20
+    landscape_save_path = os.path.join(home_path, 'landscape')
+    if not os.path.exists(landscape_save_path):
+        os.mkdir(landscape_save_path)
+        logger.info("landscape save path made!")
+
+    lrs = [1e-3, 2e-3, 1e-4, 5e-4]
+    num_models = len(lrs)
+
+    models1 = [VGG_A(), VGG_A(), VGG_A(), VGG_A()]
+    models2 = [VGG_A_BatchNorm(), VGG_A_BatchNorm(), VGG_A_BatchNorm(), VGG_A_BatchNorm()]
+    optimizers1 = [torch.optim.Adam(models1[i].parameters(), lr=lr) for i, lr in enumerate(lrs)]
+    optimizers2 = [torch.optim.Adam(models2[i].parameters(), lr=lr) for i, lr in enumerate(lrs)]
+
+    criterion = nn.CrossEntropyLoss()
+
+    result = train_for_beta_smoothness(models1, optimizers1, criterion, train_loader, val_loader, epochs_n=epo)
+    result_bn = train_for_beta_smoothness(models2, optimizers2, criterion, train_loader, val_loader, epochs_n=epo)
+
+    with open(os.path.join(landscape_save_path, 'beta_smoothness.txt'), 'a') as f:
+        f.write(str(result) + '\n')
+        f.write(str(result_bn) + '\n')
+
+
 if __name__ == "__main__":
-    main()
+    # main()
     # test()
+    main_for_beta_smoothness()
