@@ -1,5 +1,4 @@
 import sys
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from torch import nn
@@ -87,7 +86,6 @@ def set_random_seeds(seed_value=0, device=torch.device('cpu')):
 # to observe the training
 def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None, epochs_n=100, best_model_path=None):
     model.to(device)
-    loss_curve = [0]  # loss
     # train_accuracy_curve = [[np.nan] * epochs_n]
     train_accuracy_curve = []
     val_accuracy_curve = [np.nan] * epochs_n
@@ -96,8 +94,8 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
 
     batches_n = len(train_loader)
     interval = batches_n // 10  # interval to show info
-    loss_list = []  # use this to record the loss value of each step
-    grads_list = []  # use this to record the loss gradient of each step
+    loss_list = [0]  # use this to record the loss value of each step
+    grads_norm_list = []  # use this to record the loss gradient of each step
     grads_diff_list = []
     last_grad = 0  # last gradient
     index = 0  # index of loss, acc record
@@ -124,8 +122,9 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
             # You may need to record some variable values here
             # if you want to get loss gradient, use
             # grad = model.classifier[4].weight.grad.clone()
-            loss_curve[index] += loss.item()
+            loss_list[index] += loss.item()
             grad = model.classifier[4].weight.grad.clone()
+            grads_norm_list.append(round(torch.norm(grad).item(), 3))
             grads_diff_list.append(round(torch.norm(grad - last_grad).item(), 3))
             last_grad = grad
 
@@ -136,15 +135,15 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
 
             # record loss and grad and accuracy 10 times every epoch
             if (i + 1) % interval == 0:
-                loss_curve[index] /= interval
+                loss_list[index] /= interval
                 acc = round(correct / total, 4)
                 train_accuracy_curve.append(acc)  # add acc
                 correct = 0
                 total = 0
                 logger.info("Train:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-                    epoch + 1, epochs_n, i + 1, len(train_loader), loss_curve[index], acc))
+                    epoch + 1, epochs_n, i + 1, len(train_loader), loss_list[index], acc))
                 index += 1
-                loss_curve.append(0)
+                loss_list.append(0)
 
         # losses_list.append(loss_list)
         # grads.append(grad)
@@ -186,7 +185,7 @@ def train(model, optimizer, criterion, train_loader, val_loader, scheduler=None,
     logger.info('Max validation accuracy is: {:.2%}, reached at {}-th epoch.'
                 .format(max_val_accuracy, max_val_accuracy_epoch + 1))
 
-    return loss_curve, grads_diff_list, train_accuracy_curve, val_accuracy_curve
+    return loss_list, grads_diff_list, grads_norm_list, train_accuracy_curve, val_accuracy_curve
 
 
 # Use this function to plot the final loss landscape,
@@ -214,27 +213,26 @@ def main():
         optimizer1 = torch.optim.Adam(model1.parameters(), lr=lr)
         optimizer2 = torch.optim.Adam(model2.parameters(), lr=lr)
         criterion = nn.CrossEntropyLoss()
-        loss1, grads_diff1, train_acc1, val_acc1 = train(model1, optimizer1, criterion, train_loader, val_loader,
-                                                         epochs_n=epo)
-        loss2, grads_diff2, train_acc2, val_acc2 = train(model2, optimizer2, criterion, train_loader, val_loader,
-                                                         epochs_n=epo)
+        loss1, grads_diff1, grads_norm1, _, _ = train(model1, optimizer1, criterion, train_loader, val_loader,
+                                                      epochs_n=epo)
+        loss2, grads_diff2, grads_norm2, _, _ = train(model2, optimizer2, criterion, train_loader, val_loader,
+                                                      epochs_n=epo)
         # save loss and grads difference
         with open(os.path.join(landscape_save_path, 'loss.txt'), 'a') as f:
             f.write(str(loss1) + '\n')
         with open(os.path.join(landscape_save_path, 'bn_loss.txt'), 'a') as f:
             f.write(str(loss2) + '\n')
 
-        with open(os.path.join(landscape_save_path, 'grads.txt'), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'grads_diff.txt'), 'a') as f:
             f.write(str(grads_diff1) + '\n')
-        with open(os.path.join(landscape_save_path, 'bn_grads.txt'), 'a') as f:
+        with open(os.path.join(landscape_save_path, 'bn_grads_diff.txt'), 'a') as f:
             f.write(str(grads_diff2) + '\n')
 
-        # save train, val accuracy
-        with open(os.path.join(landscape_save_path, 'acc.txt'), 'a') as f:
-            f.write('train_acc' + str(train_acc1) + '\n')
-            f.write('val_acc' + str(val_acc1) + '\n')
-            f.write('train_acc_bn' + str(train_acc2) + '\n')
-            f.write('val_acc_bn' + str(val_acc2) + '\n')
+        with open(os.path.join(landscape_save_path, 'grads_norm.txt'), 'a') as f:
+            f.write(str(grads_norm1) + '\n')
+        with open(os.path.join(landscape_save_path, 'bn_grads_norm.txt'), 'a') as f:
+            f.write(str(grads_norm2) + '\n')
+
         logger.info("Record files saved.")
     # np.savetxt(os.path.join(loss_save_path, 'loss.txt'), loss, fmt='%s', delimiter=' ')
     # np.savetxt(os.path.join(grad_save_path, 'grads.txt'), grads, fmt='%s', delimiter=' ')
