@@ -267,23 +267,23 @@ def train_for_beta_smoothness(models, optimizers, criterion, train_loader, val_l
     beta_smoothness = []
     logger.info('Training for beta smoothness start!')
 
-    for epoch in range(epochs_n):
+    for epoch in tqdm(range(epochs_n), unit='epoch'):
         if scheduler is not None:
             scheduler.step()
         for model in models:
             model.train()
 
-        for i, data in enumerate(train_loader):
+        for data in train_loader:
             x, y = data
             x = x.to(device)
             y = y.to(device)
             for idx, model in enumerate(models):
-                outputs[i] = model(x)
-                optimizers[i].zero_grad()
-                losses[i] = criterion(outputs[i], y)
-                losses[i].backward()
-                optimizers[i].step()
-                grads[i] = model.classifier[4].weight.grad.clone()
+                outputs[idx] = model(x)
+                optimizers[idx].zero_grad()
+                losses[idx] = criterion(outputs[idx], y)
+                losses[idx].backward()
+                optimizers[idx].step()
+                grads[idx] = model.classifier[4].weight.grad.clone()
 
             max_diff = float("-inf")
             for a in range(num_models):
