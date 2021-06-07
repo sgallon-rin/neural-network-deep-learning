@@ -21,7 +21,7 @@ from logger_utils import logger
 
 
 def train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers, epoch_iter, interval,
-          start_epoch=0, start_epoch_pth_path=None):
+          start_epoch=0):
     trainset = custom_dataset(train_img_path, train_gt_path)
     file_num = len(trainset)
     train_loader = data.DataLoader(trainset, batch_size=batch_size, \
@@ -33,8 +33,9 @@ def train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers,
     model = EAST(pretrained=False)
     logger.info("Start from epoch {}".format(start_epoch))
     if start_epoch > 0:
-        model.load_state_dict(torch.load(start_epoch_pth_path))
-        logger.info("Successfully loaded start state dict from {}".format(start_epoch_pth_path))
+        load_pth_name = os.path.join(pths_path, 'model_epoch_{}.pth'.format(start_epoch))
+        model.load_state_dict(torch.load(load_pth_name))
+        logger.info("Successfully loaded start state dict from {}".format(load_pth_name))
     data_parallel = False
     if torch.cuda.device_count() > 1:
         model = nn.DataParallel(model)
@@ -86,10 +87,8 @@ if __name__ == '__main__':
         os.makedirs(pths_path)
     batch_size = 8
     lr = 1e-3
-    num_workers = 4
+    num_workers = 8
     epoch_iter = 600
-    save_interval = 5
-    start_epoch = 0
-    start_epoch_pth_path = None
-    train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers, epoch_iter, save_interval,
-          start_epoch, start_epoch_pth_path)
+    save_interval = 1
+    start_epoch = 5
+    train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers, epoch_iter, save_interval, start_epoch)
