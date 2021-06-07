@@ -76,9 +76,9 @@ if __name__ == '__main__':
     pths_path = os.path.join(HOME, "pths", "EAST")
     if not os.path.exists(pths_path):
         os.makedirs(pths_path)
-    batch_size = 24
+    batch_size = 8
     lr = 1e-3
-    num_workers = 16
+    num_workers = 8
     epoch_iter = 600
     save_interval = 5
     train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers, epoch_iter, save_interval)
