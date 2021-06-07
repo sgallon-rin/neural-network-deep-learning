@@ -19,6 +19,7 @@ project3/pths/*
 *.pdf
 *.zip
 *.tar.gz
+*.pth
 
 # Ignore all files in "LaTeX" folders
 **/report/*
