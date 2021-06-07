@@ -12,6 +12,9 @@ project2/saved_boards/*
 project2/code/VGG_BatchNorm/*
 project2/landscape/*
 project3/data/*
+project3/CRNN_Chinese_Characters_Rec/*
+project3/ESAT/*
+project3/pths/*
 *.h5
 *.pdf
 *.zip

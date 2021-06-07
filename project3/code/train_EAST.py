@@ -41,7 +41,6 @@ def train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers,
     logger.info("Training EAST start!")
     for epoch in range(epoch_iter):
         model.train()
-        scheduler.step(epoch)
         epoch_loss = 0
         epoch_time = time.time()
         for i, (img, gt_score, gt_geo, ignored_map) in enumerate(train_loader):
@@ -59,6 +58,8 @@ def train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers,
             logger.info('Epoch is [{}/{}], mini-batch is [{}/{}], time consumption is {:.8f}, batch_loss is {:.8f}'
                         .format(epoch + 1, epoch_iter, i + 1, int(file_num / batch_size), time.time() - start_time,
                                 loss.item()))
+
+        scheduler.step(epoch)  # `optimizer.step()` before `lr_scheduler.step()`
 
         logger.info('epoch_loss is {:.8f}, epoch_time is {:.8f}'.format(epoch_loss / int(file_num / batch_size),
                                                                   time.time() - epoch_time))
