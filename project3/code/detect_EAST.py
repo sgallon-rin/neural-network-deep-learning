@@ -202,7 +202,7 @@ def detect_dataset(model, device, test_img_path, submit_path):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='EAST Detection')
     parser.add_argument('-i', '--img', default='tr_img_00002.jpg', help='image to detect')  # 图片名
-    parser.add_argument('-m', '--model', default='model_epoch_600.pth', help='model parameter to load')  # 图片名
+    parser.add_argument('-m', '--model', default='model_epoch_600.pth', help='model parameter to load')  # 模型参数
     args = parser.parse_args()
 
     img_name = args.img
@@ -221,11 +221,11 @@ if __name__ == '__main__':
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = EAST(pretrained=False).to(device)  # 这里不导入默认的训练好的参数
     model.load_state_dict(torch.load(model_path))
-    logger.info("Loaded EAST model: {}".format(model_path))
+    logger.info("Loaded EAST model parameters from: {}".format(model_path))
     model.eval()
     img = Image.open(img_path).convert('RGB')  # 转化为RGB三通道以保证不会出错
 
     boxes = detect(img, model, device)
     plot_img = plot_boxes(img, boxes)
     plot_img.save(res_img)
-    logger.info("Detected image saved to {}".format(res_img_path))
+    logger.info("Detected image saved to {}".format(res_img))
