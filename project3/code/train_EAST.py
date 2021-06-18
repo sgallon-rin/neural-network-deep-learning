@@ -15,7 +15,6 @@ from EAST.model import EAST
 from EAST.loss import Loss
 import os
 import time
-import numpy as np
 from config import HOME, DATA_ROOT
 from logger_utils import logger
 
@@ -24,7 +23,7 @@ def train(train_img_path, train_gt_path, pths_path, batch_size, lr, num_workers,
           start_epoch=0):
     trainset = custom_dataset(train_img_path, train_gt_path)
     file_num = len(trainset)
-    train_loader = data.DataLoader(trainset, batch_size=batch_size, \
+    train_loader = data.DataLoader(trainset, batch_size=batch_size,
                                    shuffle=True, num_workers=num_workers, drop_last=True)
 
     criterion = Loss()
