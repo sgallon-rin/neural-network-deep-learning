@@ -203,8 +203,11 @@ if __name__ == '__main__':
     img_name = args.img
     detected_img_name = 'detected_' + img_name
     img_path = os.path.join(DATA_ROOT, "train", "img", img_name)
+    res_img_path = os.path.join(HOME, "img")
+    if not os.path.exists(res_img_path):
+        os.mkdir(res_img_path)
     model_path = os.path.join(HOME, "pths", "EAST", "model_epoch_600.pth")
-    res_img = os.path.join(HOME, detected_img_name)
+    res_img = os.path.join(res_img_path, detected_img_name)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = EAST(pretrained=False).to(device)  # 这里不导入默认的训练好的参数
