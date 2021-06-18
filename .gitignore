@@ -15,6 +15,7 @@ project3/data/*
 project3/CRNN_Chinese_Characters_Rec/*
 project3/ESAT/*
 project3/pths/*
+project3/img/*
 *.h5
 *.pdf
 *.zip

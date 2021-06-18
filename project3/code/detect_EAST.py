@@ -196,7 +196,7 @@ def detect_dataset(model, device, test_img_path, submit_path):
             with open(os.path.join(submit_path, 'res_' + os.path.basename(img_file).replace('.jpg', '.txt')), 'w') as f:
                 f.writelines(seq)
         except Exception as e:
-            logger.error(e)
+            logger.error(e)  # GPU out of memory
 
 
 if __name__ == '__main__':

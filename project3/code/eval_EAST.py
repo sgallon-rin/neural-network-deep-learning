@@ -33,13 +33,13 @@ def eval_model(model_name, test_img_path, submit_path, save_flag=True):
 
     start_time = time.time()
     detect_dataset(model, device, test_img_path, submit_path)
-    os.chdir(submit_path)
-    res = subprocess.getoutput('zip -q submit.zip *.txt')
-    res = subprocess.getoutput('mv submit.zip ../')
-    os.chdir('../')
-    res = subprocess.getoutput('python ./EAST/evaluate/script.py –g=./EAST/evaluate/gt.zip –s=./submit.zip')
-    print(res)
-    os.remove('./submit.zip')
+    # os.chdir(submit_path)
+    # res = subprocess.getoutput('zip -q submit.zip *.txt')
+    # res = subprocess.getoutput('mv submit.zip ../')
+    # os.chdir('../')
+    # res = subprocess.getoutput('python ./EAST/evaluate/script.py –g=./EAST/evaluate/gt.zip –s=./submit.zip')
+    # print(res)
+    # os.remove('./submit.zip')
     logger.info('eval time is {}'.format(time.time() - start_time))
 
     if not save_flag:
@@ -49,5 +49,5 @@ def eval_model(model_name, test_img_path, submit_path, save_flag=True):
 if __name__ == '__main__':
     model_name = os.path.join(HOME, "pths", "EAST", 'model_epoch_600.pth')
     test_img_path = os.path.join(DATA_ROOT, "test", "img")
-    submit_path = './submit'
+    submit_path = os.path.join(DATA_ROOT, "test", "EAST_gt")
     eval_model(model_name, test_img_path, submit_path)
