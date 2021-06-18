@@ -4,7 +4,11 @@
 # @Author      : sgallon
 # @Email       : shcmsgallon@outlook.com
 # @File        : detect_EAST.py
-# @Description :
+# @Description : detect text in image using EAST
+# NOTE:
+# The package `lamns` has problem,
+# I cannot import it successfully on my Mac,
+# but it works fine on server running CentOS
 
 
 import torch
@@ -184,7 +188,7 @@ def detect_dataset(model, device, test_img_path, submit_path):
 
     for i, img_file in enumerate(img_files):
         try:
-            print('evaluating {} image'.format(i), end='\r')
+            logger.info('evaluating {} image'.format(i))
             boxes = detect(Image.open(img_file), model, device)
             seq = []
             if boxes is not None:
@@ -192,29 +196,36 @@ def detect_dataset(model, device, test_img_path, submit_path):
             with open(os.path.join(submit_path, 'res_' + os.path.basename(img_file).replace('.jpg', '.txt')), 'w') as f:
                 f.writelines(seq)
         except Exception as e:
-            print(e)
+            logger.error(e)
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='EAST Detection')
     parser.add_argument('-i', '--img', default='tr_img_00002.jpg', help='image to detect')  # 图片名
+    parser.add_argument('-m', '--model', default='model_epoch_600.pth', help='model parameter to load')  # 图片名
     args = parser.parse_args()
 
     img_name = args.img
+    model_name = args.model
+
     detected_img_name = 'detected_' + img_name
     img_path = os.path.join(DATA_ROOT, "train", "img", img_name)
+    logger.info("Input image is {}".format(img_path))
     res_img_path = os.path.join(HOME, "img")
     if not os.path.exists(res_img_path):
         os.mkdir(res_img_path)
-    model_path = os.path.join(HOME, "pths", "EAST", "model_epoch_600.pth")
+        logger.info("Detection output demo dir made: {}".format(res_img_path))
+    model_path = os.path.join(HOME, "pths", "EAST", model_name)
     res_img = os.path.join(res_img_path, detected_img_name)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     model = EAST(pretrained=False).to(device)  # 这里不导入默认的训练好的参数
     model.load_state_dict(torch.load(model_path))
+    logger.info("Loaded EAST model: {}".format(model_path))
     model.eval()
     img = Image.open(img_path).convert('RGB')  # 转化为RGB三通道以保证不会出错
 
     boxes = detect(img, model, device)
     plot_img = plot_boxes(img, boxes)
     plot_img.save(res_img)
+    logger.info("Detected image saved to {}".format(res_img_path))
