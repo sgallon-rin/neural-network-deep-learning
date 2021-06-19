@@ -64,7 +64,8 @@ class _OWN(data.Dataset):
         img = img.convert("RGB")
 
         # resize
-        img_h, img_w = img.shape
+        img_h, img_w = img.size
+        # img_h, img_w = img.shape
         # img = cv2.resize(img, (0, 0), fx=self.inp_w / img_w, fy=self.inp_h / img_h, interpolation=cv2.INTER_CUBIC)
         # img = np.reshape(img, (self.inp_h, self.inp_w, 1))
         resize_ratio = self.inp_h / float(img_h)
