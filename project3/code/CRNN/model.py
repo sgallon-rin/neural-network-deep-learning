@@ -86,7 +86,7 @@ def weights_init(m):
 
 def get_crnn(config):
 
-    model = CRNN(config.MODEL.IMAGE_SIZE.H, 1, config.MODEL.NUM_CLASSES + 1, config.MODEL.NUM_HIDDEN)
+    model = CRNN(config.MODEL.IMAGE_SIZE.H, config.DATASET.CHANNEL, config.MODEL.NUM_CLASSES + 1, config.MODEL.NUM_HIDDEN)
     model.apply(weights_init)
 
     return model
