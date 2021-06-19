@@ -152,6 +152,7 @@ def main():
     best_acc = 0.0
     converter = utils.strLabelConverter(config.DATASET.ALPHABETS)
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
+        logger.info("Start trining epoch [{}/{}]".format(epoch, config.TRAIN.END_EPOCH))
         function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch,
                        writer_dict, output_dict)
         lr_scheduler.step()
@@ -182,6 +183,8 @@ def main():
                 # "best_acc": best_acc,
             }, os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, train_acc))
         )
+        logger.info("Epoch state dict saved to {}"
+                    .format(os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, train_acc))))
 
     writer_dict['writer'].close()
 

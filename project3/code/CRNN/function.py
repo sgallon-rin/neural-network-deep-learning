@@ -108,7 +108,7 @@ def validate(config, val_loader, dataset, converter, model, criterion, device, e
                     n_correct += 1
 
             if (i + 1) % config.PRINT_FREQ == 0:
-                print('Epoch: [{0}][{1}/{2}]'.format(epoch, i, len(val_loader)))
+                print('Epoch: [{0}][{1}/{2}], validating'.format(epoch, i, len(val_loader)))
 
             if i == config.TEST.NUM_TEST_BATCH:
                 break
