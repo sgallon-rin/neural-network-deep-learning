@@ -140,14 +140,14 @@ def main():
         pin_memory=config.PIN_MEMORY,
     )
 
-    val_dataset = get_dataset(config)(config, is_train=False)
-    val_loader = DataLoader(
-        dataset=val_dataset,
-        batch_size=config.TEST.BATCH_SIZE_PER_GPU,
-        shuffle=config.TEST.SHUFFLE,
-        num_workers=config.WORKERS,
-        pin_memory=config.PIN_MEMORY,
-    )
+    # val_dataset = get_dataset(config)(config, is_train=False)
+    # val_loader = DataLoader(
+    #     dataset=val_dataset,
+    #     batch_size=config.TEST.BATCH_SIZE_PER_GPU,
+    #     shuffle=config.TEST.SHUFFLE,
+    #     num_workers=config.WORKERS,
+    #     pin_memory=config.PIN_MEMORY,
+    # )
 
     best_acc = 0.0
     converter = utils.strLabelConverter(config.DATASET.ALPHABETS)
@@ -157,17 +157,19 @@ def main():
         lr_scheduler.step()
 
         train_acc = function.validate(config, train_loader, train_dataset, converter, model, criterion, device, epoch,
-                                      None, None, mode="train")
-        acc = function.validate(config, val_loader, val_dataset, converter, model, criterion, device, epoch,
-                                writer_dict, output_dict, mode="test")
+                                      None, None)
+        # acc = function.validate(config, val_loader, val_dataset, converter, model, criterion, device, epoch,
+        #                         writer_dict, output_dict)
 
         # acc = function.validate(config, val_loader, val_dataset, converter, model, criterion, device, epoch, writer_dict, output_dict)
 
-        is_best = acc > best_acc
-        best_acc = max(acc, best_acc)
+        # is_best = acc > best_acc
+        # best_acc = max(acc, best_acc)
+        best_acc = max(train_acc, best_acc)
 
-        logger.info("is best: [{}], best acc is: [{:.4f}], train_acc is [{:.4f}], val_acc is [{:.4f}]"
-                    .format(is_best, best_acc, train_acc, acc))
+        # logger.info("is best: [{}], best acc is: [{:.4f}], train_acc is [{:.4f}], val_acc is [{:.4f}]"
+        #             .format(is_best, best_acc, train_acc, acc))
+        logger.info("Epoch {}, train loiss: {:.4f}".format(epoch + 1, train_acc))
         # print("is best:", is_best)
         # print("best acc is:", best_acc)
         # save checkpoint
@@ -177,8 +179,8 @@ def main():
                 "epoch": epoch + 1,
                 # "optimizer": optimizer.state_dict(),
                 # "lr_scheduler": lr_scheduler.state_dict(),
-                "best_acc": best_acc,
-            }, os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, acc))
+                # "best_acc": best_acc,
+            }, os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, train_acc))
         )
 
     writer_dict['writer'].close()
