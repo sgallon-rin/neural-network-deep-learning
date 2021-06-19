@@ -37,7 +37,8 @@ def set_random_seed(seed=1):
 
 def parse_arg():
     parser = argparse.ArgumentParser(description="train crnn")
-    parser.add_argument('--cfg', help='experiment configuration filename', type=str)
+    parser.add_argument('--cfg', default=os.path.join(HOME, "code", "CRNN", "CRNN_config.yaml"),
+                        help='experiment configuration filename', type=str)
     args = parser.parse_args()
 
     with open(args.cfg, 'r') as f:
@@ -89,7 +90,7 @@ def main():
     if isinstance(config.TRAIN.LR_STEP, list):
         lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer, config.TRAIN.LR_STEP,
-            config.TRAIN.LR_FACTOR, last_epoch-1
+            config.TRAIN.LR_FACTOR, last_epoch - 1
         )
     else:
         lr_scheduler = torch.optim.lr_scheduler.StepLR(
@@ -100,7 +101,7 @@ def main():
     if config.TRAIN.FINETUNE.IS_FINETUNE:
         model_state_file = config.TRAIN.FINETUNE.FINETUNE_CHECKPOINIT
         if model_state_file == '':
-            print(" => no checkpoint found")
+            logger.info(" => no checkpoint found")
         checkpoint = torch.load(model_state_file, map_location='cpu')
         if 'state_dict' in checkpoint.keys():
             checkpoint = checkpoint['state_dict']
@@ -151,8 +152,8 @@ def main():
     best_acc = 0.0
     converter = utils.strLabelConverter(config.DATASET.ALPHABETS)
     for epoch in range(last_epoch, config.TRAIN.END_EPOCH):
-
-        function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch, writer_dict, output_dict)
+        function.train(config, train_loader, train_dataset, converter, model, criterion, optimizer, device, epoch,
+                       writer_dict, output_dict)
         lr_scheduler.step()
 
         train_acc = function.validate(config, train_loader, train_dataset, converter, model, criterion, device, epoch,
@@ -177,7 +178,7 @@ def main():
                 # "optimizer": optimizer.state_dict(),
                 # "lr_scheduler": lr_scheduler.state_dict(),
                 "best_acc": best_acc,
-            },  os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, acc))
+            }, os.path.join(output_dict['chs_dir'], "checkpoint_{}_acc_{:.4f}.pth".format(epoch, acc))
         )
 
     writer_dict['writer'].close()
