@@ -1,0 +1,62 @@
+GPUID: 0
+WORKERS: 8
+PRINT_FREQ: 10
+SAVE_FREQ: 1
+PIN_MEMORY: True
+OUTPUT_DIR: '/home/jupyter/sjl/neural-network-deep-learning/project3/pths/CRNN'
+DEBUG_DIR: '/home/jupyter/sjl/neural-network-deep-learning/project3/pths/CRNN/debug'
+
+CUDNN:
+  BENCHMARK: True
+  DETERMINISTIC: False
+  ENABLED: True
+
+DATASET:
+  DATASET: OWN
+  CHANNEL: 3
+  TRAIN_ROOT: "/home/jupyter/sjl/neural-network-deep-learning/project3/data/train/text_img"
+  TEST_ROOT: "/home/jupyter/sjl/neural-network-deep-learning/project3/data/test/img"
+  JSON_FILE: {'train': '/home/jupyter/sjl/neural-network-deep-learning/project3/data/train/txt/train_own.txt',
+              'val': ''}
+  SCALE_FACTOR: 0.25
+  ROT_FACTOR: 30
+  STD: 0.193
+  MEAN: 0.588
+  ALPHABETS: ''
+
+TRAIN:
+  BATCH_SIZE_PER_GPU: 32
+  SHUFFLE: True
+  BEGIN_EPOCH: 0
+  END_EPOCH: 100
+  RESUME:
+    IS_RESUME: False
+    FILE: ''
+  OPTIMIZER: 'adam'
+  LR: 0.0001
+  WD: 0.0001
+  LR_STEP: [50, 80]
+  LR_FACTOR: 0.1
+  MOMENTUM: 0.9
+  NESTEROV: False
+  RMSPROP_ALPHA:
+  RMSPROP_CENTERED:
+  FINETUNE:
+    IS_FINETUNE: False
+    FINETUNE_CHECKPOINIT: 'output/checkpoints/mixed_second_finetune_acc_97P7.pth'
+    FREEZE: true
+
+TEST:
+  BATCH_SIZE_PER_GPU: 16
+  SHUFFLE: True  # for random test rather than test on the whole validation set
+  NUM_TEST_BATCH: 1000
+  NUM_TEST_DISP: 10
+
+MODEL:
+  NAME: 'crnn'
+  IMAGE_SIZE:
+    H: 32        # height must be mutiple of 16
+    MAX_W: 256   # padding to fixed length
+  NUM_CLASSES: 0
+  NUM_HIDDEN: 256
+
