@@ -170,7 +170,7 @@ def main():
 
         # logger.info("is best: [{}], best acc is: [{:.4f}], train_acc is [{:.4f}], val_acc is [{:.4f}]"
         #             .format(is_best, best_acc, train_acc, acc))
-        logger.info("Epoch {}, train loss: {:.4f}".format(epoch + 1, train_acc))
+        logger.info("Epoch {}, train acc: {:.4f}".format(epoch + 1, train_acc))
         # print("is best:", is_best)
         # print("best acc is:", best_acc)
         # save checkpoint

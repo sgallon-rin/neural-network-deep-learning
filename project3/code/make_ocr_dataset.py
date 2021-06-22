@@ -78,12 +78,20 @@ if __name__ == '__main__':
     parser.add_argument('--mode', default="train", help='dataset mode (train/test)', type=str)
     args = parser.parse_args()
     mode = args.mode
+    modes = ["train", "test"]
+    gt = {"train": "gt", "test": "EAST_gt"}
+    assert mode in modes, "Mode must be in {}".format(modes)
 
     img_dataset_path = os.path.join(DATA_ROOT, mode, "img")  # 数据集图片目录
-    gt_dataset_path = os.path.join(DATA_ROOT, mode, "gt")  # 数据集的gt目录
+    logger.info("Input img path is {}".format(img_dataset_path))
+    gt_dataset_path = os.path.join(DATA_ROOT, mode, gt[mode])  # 数据集的gt目录
+    logger.info("Input gt path is {}".format(gt_dataset_path))
     output_img_path = os.path.join(DATA_ROOT, mode, "text_img")  # 经过提取后，截取的文字部分的图片放在这个目录
+    logger.info("Output img path is {}".format(output_img_path))
     output_text_path = os.path.join(DATA_ROOT, mode, "txt")  # 将每张图片的标注保存起来
+    logger.info("Output text path is {}".format(output_text_path))
     output_text_file = mode + '_own.txt'
+    logger.info("Output text file is {}".format(output_text_file))
 
     if os.path.exists(output_img_path):
         shutil.rmtree(output_img_path)  # 先清理掉保存图片的文件夹，以免有其他文件
@@ -94,20 +102,24 @@ if __name__ == '__main__':
         f.write('')  # 将标注文件其中的内容清空
 
     text_num = 0  # 对剪切出的图像计数
-    for filename in os.listdir(img_dataset_path):
+    imgs = os.listdir(img_dataset_path)
+    for idx, filename in enumerate(imgs):
         if not filename.endswith(".jpg"):
-            logger.info("Skip non-jpg file: {}".format(filename))
+            logger.info("[{}/{}]Skip non-jpg file: {}".format(idx, len(imgs), filename))
             continue
-        logger.info("Processing picture: {}".format(filename))
+        logger.info("[{}/{}]Processing picture: {}".format(idx, len(imgs), filename))
         img_name = filename
-        gt_name = filename.split('.')[0] + '.txt'
+        if mode == "train":
+            gt_name = filename.split('.')[0] + '.txt'
+        elif mode == "test":
+            gt_name = "res_" + filename.split('.')[0] + '.txt'
         img_path = os.path.join(img_dataset_path, img_name)
         gt_path = os.path.join(gt_dataset_path, gt_name)
 
         img = plt.imread(img_path)  # 读取图像
 
         gt_coordinates = []
-        gt_labels = []
+        gt_labels = []  # only for train
         with open(gt_path) as f:
             while True:
                 line = f.readline()
@@ -116,21 +128,28 @@ if __name__ == '__main__':
                 coordinates = line.split(',')[:8]  # 左上，左下，右下，右上
                 coordinates = [int(coor) for coor in coordinates]
                 gt_coordinates.append(coordinates)
-                label = line.split(',')[9][:-1]  # 要去掉最后的'\n'
-                gt_labels.append(label)
+                if mode == "train":
+                    label = line.split(',')[9][:-1]  # 要去掉最后的'\n'
+                    gt_labels.append(label)
 
         for i in range(len(gt_coordinates)):
             out_img = perspective_affine(img, gt_coordinates[i])
-            out_label = gt_labels[i]
-            if out_label == '###':  # 不关注的区域我们只取十分之一来训练，一方面平衡样本，一方面加速训练
-                if random.random() > 0.1:
-                    logger.info('Ignore a background picture, skip to next')
-                    continue
-                else:
-                    logger.info('Take a background picture')
-            img_name = str(text_num) + '.jpg'  # png无损保存太大，使用jpg
+            if mode == "train":
+                out_label = gt_labels[i]
+                if out_label == '###':  # 不关注的区域我们只取十分之一来训练，一方面平衡样本，一方面加速训练
+                    if random.random() > 0.1:
+                        logger.info('Ignore a background picture, skip to next')
+                        continue
+                    else:
+                        logger.info('Take a background picture')
+            img_name = filename + "_" + str(i) + '.jpg'  # png无损保存太大，使用jpg
             cv2.imwrite(os.path.join(output_img_path, img_name), out_img)  # cv2.imwrite路径不能有中文
             with open(os.path.join(output_text_path, output_text_file), 'a', encoding='utf-8') as f:
-                f.write(img_name + ' ' + out_label + '\n')  # 图像名 内容
+                if mode == "train":
+                    f.write(img_name + ' ' + out_label + '\n')  # 图像名 内容
+                elif mode == "test":
+                    f.write(img_name + ',' + ",".join(gt_coordinates) + '\n')
             text_num += 1
-            logger.info('第{}张文本图像保存完毕！'.format(text_num))
+            logger.info('第{}张文本图像保存完毕！为: {}'.format(text_num, os.path.join(output_img_path, img_name)))
+
+    logger.info("All done. 剪切出的图片共计{}张".format(text_num))
