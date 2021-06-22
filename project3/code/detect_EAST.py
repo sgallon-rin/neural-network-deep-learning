@@ -187,16 +187,20 @@ def detect_dataset(model, device, test_img_path, submit_path):
     img_files = sorted([os.path.join(test_img_path, img_file) for img_file in img_files])
 
     for i, img_file in enumerate(img_files):
+        logger.info('evaluating [{}/{}] image'.format(i, len(img_files)))
         try:
-            logger.info('evaluating {} image'.format(i))
             boxes = detect(Image.open(img_file), model, device)
             seq = []
             if boxes is not None:
                 seq.extend([','.join([str(int(b)) for b in box[:-1]]) + '\n' for box in boxes])
-            with open(os.path.join(submit_path, 'res_' + os.path.basename(img_file).replace('.jpg', '.txt')), 'w') as f:
+            with open(os.path.join(submit_path, os.path.basename(img_file).replace('.jpg', '.txt')), 'w') as f:
                 f.writelines(seq)
         except Exception as e:
-            logger.error(e)  # GPU out of memory
+            logger.error("Error caught: {}".format(e))  # In most cases, error is GPU out of memory
+            # empty result
+            seq = []
+            with open(os.path.join(submit_path, os.path.basename(img_file).replace('.jpg', '.txt')), 'w') as f:
+                f.writelines(seq)
 
 
 if __name__ == '__main__':

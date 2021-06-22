@@ -109,10 +109,7 @@ if __name__ == '__main__':
             continue
         logger.info("[{}/{}]Processing picture: {}".format(idx, len(imgs), filename))
         img_name = filename
-        if mode == "train":
-            gt_name = filename.split('.')[0] + '.txt'
-        elif mode == "test":
-            gt_name = "res_" + filename.split('.')[0] + '.txt'
+        gt_name = filename.split('.')[0] + '.txt'
         img_path = os.path.join(img_dataset_path, img_name)
         gt_path = os.path.join(gt_dataset_path, gt_name)
 
@@ -142,7 +139,10 @@ if __name__ == '__main__':
                         continue
                     else:
                         logger.info('Take a background picture')
-            img_name = filename + "_" + str(i) + '.jpg'  # png无损保存太大，使用jpg
+            if mode == "train":
+                img_name = str(text_num) + '.jpg'  # png无损保存太大，使用jpg
+            elif mode == "test":
+                img_name = filename.split(".")[0] + "_" + str(i) + '.jpg'
             cv2.imwrite(os.path.join(output_img_path, img_name), out_img)  # cv2.imwrite路径不能有中文
             with open(os.path.join(output_text_path, output_text_file), 'a', encoding='utf-8') as f:
                 if mode == "train":
