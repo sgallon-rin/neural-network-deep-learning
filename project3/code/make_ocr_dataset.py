@@ -148,7 +148,7 @@ if __name__ == '__main__':
                 if mode == "train":
                     f.write(img_name + ' ' + out_label + '\n')  # 图像名 内容
                 elif mode == "test":
-                    f.write(img_name + ',' + ",".join(gt_coordinates) + '\n')
+                    f.write(img_name + ',' + ",".join(str(x) for x in gt_coordinates[i]) + '\n')
             text_num += 1
             logger.info('第{}张文本图像保存完毕！为: {}'.format(text_num, os.path.join(output_img_path, img_name)))
 
