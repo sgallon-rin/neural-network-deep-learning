@@ -96,7 +96,7 @@ def recognition(config, img_path, model, converter, device):
     # img = (img / 255. - config.DATASET.MEAN) / config.DATASET.STD
     # img = img.transpose([2, 0, 1])
 
-    img = torch.from_numpy(img)
+    # img = torch.from_numpy(img)
     img = img.to(device)
     img = img.view(1, *img.size())
     model.eval()
