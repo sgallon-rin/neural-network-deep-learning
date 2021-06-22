@@ -1,5 +1,9 @@
 # Project 3 - Scene Text Recognition
 
+Jialun Shen 16307110030
+
+
+
 The Scene Text Recognition (SCR) task can be divided into two sub-tasks:
 first 
 
@@ -39,6 +43,12 @@ Detect the text position in the test set and save in `./data/EAST_gt/`.
 
 Run `$ python ./code/eval_EAST.py`. 
 
+Here are some of the detection examples:
+
+![detected_tr_img_00001.jpg](./img/detected_tr_img_00001.jpg)
+
+![detected_tr_img_00002.jpg](./img/detected_tr_img_00002.jpg)
+
 ## CRNN
 
 CRNN is used for recognition task.
@@ -76,6 +86,10 @@ Test loss: 1.0573, accuray: 0.5379
 [2021-06-22 03:07:10,949] [INFO] Epoch state dict saved to /home/jupyter/sjl/neural-network-deep-learning/project3/pths/CRNN/OWN/crnn/2021-06-21-10-09/checkpoints/checkpoint_99_acc_0.5379.pth
 ```
 
-### Generate Result to Submit
+### Get Recognition Result
 
-Run `$ python .py`
+Run `$ python ./code/predict_CRNN.py` to let CRNN predict text based on extracted mini-pictures by EAST.
+
+## Generate result for submit
+
+Run `$ python ./code/make_submit_gt.py` to get gt for the test set as the same format of the training set. The result is in `./data/test/submit_gt/`
