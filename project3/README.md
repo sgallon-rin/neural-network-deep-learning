@@ -58,11 +58,13 @@ and save each picture as several labeled mini-pictures in `./data/train/text_img
 (72838 mini-pictures in total.)
 The labels are saved in a single txt as `./data/train/txt/train_own.txt`
 
+Similarly, there are 20589 mini-pictures extracted from the test set by EAST trained in the previous stage.
+
 ### Training
 
 Run `$ python ./code/train_CRNN.py`
 
-Trained for 100 epochs (due to time limitation), took one day.
+Trained for 100 epochs (due to time limitation), took roughly one day.
 
 ```
 ...
