@@ -8,3 +8,5 @@
 |Apr.30, 2021 | [Project 1 - Neural Network (with MATLAB)](./project1) |
 |Jun.1 2021 | [Project 2 - Train a Network on CIFAR-10](./project2) |
 |Jun.22, 2021 | [Project 3 - Scene  Text Recognition](./project3)|
+
+The final project is in another repository: [neural-network-deep-learning-final](https://github.com/sgallon-rin/neural-network-deep-learning-final).
